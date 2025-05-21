@@ -14,18 +14,20 @@
 
 import re
 
-def extract_solution(solution_str: str, method: str = "strict") -> str | None:
-    """Return the final numeric answer (as a string) or None."""
-    assert method in {"strict", "flexible"}
+
+def extract_solution(solution_str: str, method: str = "strict"):
+    assert method in ["strict", "flexible"]
 
     m = re.search(r"<answer>\s*([-0-9.,]+).*?</answer>", solution_str, flags=re.I | re.S)
     if m:
         return m.group(1).replace(",", "").replace("$", "")
 
+    # 1) 기존 #### 패턴
     if method == "strict":
         m = re.search(r"####\\s*([-0-9.,]+)", solution_str)
         return m.group(1).replace(",", "").replace("$", "") if m else None
 
+    # 2) flexible 모드: 마지막 숫자
     nums = re.findall(r"[-0-9.,]+", solution_str)
     for num in reversed(nums):
         if num.strip().strip("."):
@@ -46,7 +48,6 @@ def compute_score(solution_str, ground_truth, method="strict", format_score=0.0,
         score: the score for the correct answer
     """
     answer = extract_solution(solution_str=solution_str, method=method)
-    #print(f"answer: {answer} | ground_truth: {ground_truth} | score: {answer == ground_truth}")
     if answer is None:
         return 0
     else:

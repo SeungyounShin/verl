@@ -1,0 +1,266 @@
+tools:
+  - class_name: "verl.tools.relational_all_tools.GetUserNameTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "get_user_name"
+        description: "Get the name of the user with the given user ID."
+        parameters:
+          type: "object"
+          properties:
+            user_id:
+              title: "User Id"
+              type: "integer"
+          required: ["user_id"]
+
+  - class_name: "verl.tools.relational_all_tools.ListUserIdsTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "list_user_ids"
+        description: "List all the user IDs."
+        parameters:
+          type: "object"
+          properties: {}
+          required: []
+
+  - class_name: "verl.tools.relational_all_tools.FindUsersByNameTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "find_users_by_name"
+        description: "Find users with the given name."
+        parameters:
+          type: "object"
+          properties:
+            name:
+              title: "Name"
+              type: "string"
+          required: ["name"]
+
+  - class_name: "verl.tools.relational_all_tools.FindLocationsByNameTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "find_locations_by_name"
+        description: "Find locations with the given city name."
+        parameters:
+          type: "object"
+          properties:
+            city:
+              title: "City"
+              type: "string"
+          required: ["city"]
+
+  - class_name: "verl.tools.relational_all_tools.FindFoodsByNameTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "find_foods_by_name"
+        description: "Find foods with the given name."
+        parameters:
+          type: "object"
+          properties:
+            food:
+              title: "Food"
+              type: "string"
+          required: ["food"]
+
+  - class_name: "verl.tools.relational_all_tools.GetUserEmailTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "get_user_email"
+        description: "Get the email of the user with the given user ID."
+        parameters:
+          type: "object"
+          properties:
+            user_id:
+              title: "User Id"
+              type: "integer"
+          required: ["user_id"]
+
+  - class_name: "verl.tools.relational_all_tools.GetUserLocationTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "get_user_location"
+        description: "Get the location ID of the user with the given user ID."
+        parameters:
+          type: "object"
+          properties:
+            user_id:
+              title: "User Id"
+              type: "integer"
+          required: ["user_id"]
+
+  - class_name: "verl.tools.relational_all_tools.GetUserFavoriteColorTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "get_user_favorite_color"
+        description: "Get the favorite color of the user with the given user ID."
+        parameters:
+          type: "object"
+          properties:
+            user_id:
+              title: "User Id"
+              type: "integer"
+          required: ["user_id"]
+
+  - class_name: "verl.tools.relational_all_tools.GetUserFavoriteFoodsTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "get_user_favorite_foods"
+        description: "Get the list of favorite foods of the user with the given user ID."
+        parameters:
+          type: "object"
+          properties:
+            user_id:
+              title: "User Id"
+              type: "integer"
+          required: ["user_id"]
+
+  - class_name: "verl.tools.relational_all_tools.GetWeatherAtLocationTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "get_weather_at_location"
+        description: "Get the current weather at the location with the given location ID."
+        parameters:
+          type: "object"
+          properties:
+            location_id:
+              title: "Location Id"
+              type: "integer"
+          required: ["location_id"]
+
+  - class_name: "verl.tools.relational_all_tools.GetCityForLocationTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "get_city_for_location"
+        description: "Get the city for the location with the given location ID."
+        parameters:
+          type: "object"
+          properties:
+            location_id:
+              title: "Location Id"
+              type: "integer"
+          required: ["location_id"]
+
+  - class_name: "verl.tools.relational_all_tools.GetCurrentTimeForLocationTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "get_current_time_for_location"
+        description: "Get the current time for the location with the given location ID."
+        parameters:
+          type: "object"
+          properties:
+            location_id:
+              title: "Location Id"
+              type: "integer"
+          required: ["location_id"]
+
+  - class_name: "verl.tools.relational_all_tools.GetCurrentWeatherForLocationTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "get_current_weather_for_location"
+        description: "Get the current weather for the location with the given location ID."
+        parameters:
+          type: "object"
+          properties:
+            location_id:
+              title: "Location Id"
+              type: "integer"
+          required: ["location_id"]
+
+  - class_name: "verl.tools.relational_all_tools.GetFoodNameTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "get_food_name"
+        description: "Get the name of the food with the given food ID."
+        parameters:
+          type: "object"
+          properties:
+            food_id:
+              title: "Food Id"
+              type: "integer"
+          required: ["food_id"]
+
+  - class_name: "verl.tools.relational_all_tools.GetFoodCaloriesTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "get_food_calories"
+        description: "Get the calories per serving for the food with the given food ID."
+        parameters:
+          type: "object"
+          properties:
+            food_id:
+              title: "Food Id"
+              type: "integer"
+          required: ["food_id"]
+
+  - class_name: "verl.tools.relational_all_tools.GetFoodAllergicIngredientsTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "get_food_allergic_ingredients"
+        description: "Get the list of allergic ingredients for the food with the given food ID."
+        parameters:
+          type: "object"
+          properties:
+            food_id:
+              title: "Food Id"
+              type: "integer"
+          required: ["food_id"]
+
+  - class_name: "verl.tools.relational_all_tools.GetCurrentUserIdTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "get_current_user_id"
+        description: "Get the current user's ID."
+        parameters:
+          type: "object"
+          properties: {}
+          required: []

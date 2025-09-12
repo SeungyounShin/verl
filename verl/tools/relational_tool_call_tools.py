@@ -1,5 +1,5 @@
 # examples/tools/relational_all_tools.py
-import datetime
+from datetime import datetime
 import json
 import logging
 import os
@@ -82,6 +82,46 @@ def _find_foods_by_name(food: str) -> List[Dict[str, Any]]:
     return [{"id": f["id"], "name": f["name"]} for f in hits]
 
 # -----------------------------------------------------------------------------
+# Error handling helpers
+# -----------------------------------------------------------------------------
+def _safe_int(value, field_name: str) -> Optional[int]:
+    try:
+        return int(value)
+    except Exception:
+        return None
+
+def _err(msg: str) -> ToolResponse:
+    # Align with benchmark.py style: return an error text instead of raising
+    return ToolResponse(text=f"Error: {msg}")
+
+def _get_user_or_err(user_id_val) -> tuple[Optional[dict], Optional[ToolResponse]]:
+    user_id = _safe_int(user_id_val, "user_id")
+    if user_id is None:
+        return None, _err("invalid 'user_id'")
+    user = _user_by_id.get(user_id)
+    if user is None:
+        return None, _err(f"user_id {user_id} not found")
+    return user, None
+
+def _get_location_or_err(location_id_val) -> tuple[Optional[dict], Optional[ToolResponse]]:
+    location_id = _safe_int(location_id_val, "location_id")
+    if location_id is None:
+        return None, _err("invalid 'location_id'")
+    loc = _loc_by_id.get(location_id)
+    if loc is None:
+        return None, _err(f"location_id {location_id} not found")
+    return loc, None
+
+def _get_food_or_err(food_id_val) -> tuple[Optional[dict], Optional[ToolResponse]]:
+    food_id = _safe_int(food_id_val, "food_id")
+    if food_id is None:
+        return None, _err("invalid 'food_id'")
+    food = _food_by_id.get(food_id)
+    if food is None:
+        return None, _err(f"food_id {food_id} not found")
+    return food, None
+
+# -----------------------------------------------------------------------------
 # Base Tool
 # -----------------------------------------------------------------------------
 class RelationalBaseTool(BaseTool):
@@ -126,8 +166,10 @@ class GetUserNameTool(RelationalBaseTool):
         {"type": "object", "properties": {"user_id": {"title": "User Id", "type": "integer"}}, "required": ["user_id"]},
     )
     async def execute(self, instance_id, parameters, **kwargs):
-        user_id = int(parameters["user_id"])
-        result = _user_by_id[user_id]["name"]
+        user, err = _get_user_or_err(parameters.get("user_id"))
+        if err is not None:
+            return err, 0.0, {}
+        result = user["name"]
         self._instance[instance_id]["last"] = result
         return ToolResponse(text=_json_text(result)), 0.0, {}
 
@@ -181,8 +223,10 @@ class GetUserEmailTool(RelationalBaseTool):
         {"type": "object", "properties": {"user_id": {"title": "User Id", "type": "integer"}}, "required": ["user_id"]},
     )
     async def execute(self, instance_id, parameters, **kwargs):
-        user_id = int(parameters["user_id"])
-        result = _user_by_id[user_id]["email"]
+        user, err = _get_user_or_err(parameters.get("user_id"))
+        if err is not None:
+            return err, 0.0, {}
+        result = user["email"]
         self._instance[instance_id]["last"] = result
         return ToolResponse(text=result), 0.0, {}
 
@@ -193,8 +237,10 @@ class GetUserLocationTool(RelationalBaseTool):
         {"type": "object", "properties": {"user_id": {"title": "User Id", "type": "integer"}}, "required": ["user_id"]},
     )
     async def execute(self, instance_id, parameters, **kwargs):
-        user_id = int(parameters["user_id"])
-        result = _user_by_id[user_id]["location"]
+        user, err = _get_user_or_err(parameters.get("user_id"))
+        if err is not None:
+            return err, 0.0, {}
+        result = user["location"]
         self._instance[instance_id]["last"] = result
         return ToolResponse(text=_json_text(result)), 0.0, {}
 
@@ -205,8 +251,10 @@ class GetUserFavoriteColorTool(RelationalBaseTool):
         {"type": "object", "properties": {"user_id": {"title": "User Id", "type": "integer"}}, "required": ["user_id"]},
     )
     async def execute(self, instance_id, parameters, **kwargs):
-        user_id = int(parameters["user_id"])
-        result = _user_by_id[user_id]["favorite_color"]
+        user, err = _get_user_or_err(parameters.get("user_id"))
+        if err is not None:
+            return err, 0.0, {}
+        result = user["favorite_color"]
         self._instance[instance_id]["last"] = result
         return ToolResponse(text=result), 0.0, {}
 
@@ -217,8 +265,10 @@ class GetUserFavoriteFoodsTool(RelationalBaseTool):
         {"type": "object", "properties": {"user_id": {"title": "User Id", "type": "integer"}}, "required": ["user_id"]},
     )
     async def execute(self, instance_id, parameters, **kwargs):
-        user_id = int(parameters["user_id"])
-        result = list(_user_by_id[user_id]["favorite_foods"])
+        user, err = _get_user_or_err(parameters.get("user_id"))
+        if err is not None:
+            return err, 0.0, {}
+        result = list(user["favorite_foods"])
         self._instance[instance_id]["last"] = result
         return ToolResponse(text=_json_text(result)), 0.0, {}
 
@@ -229,8 +279,10 @@ class GetWeatherAtLocationTool(RelationalBaseTool):
         {"type": "object", "properties": {"location_id": {"title": "Location Id", "type": "integer"}}, "required": ["location_id"]},
     )
     async def execute(self, instance_id, parameters, **kwargs):
-        location_id = int(parameters["location_id"])
-        result = _loc_by_id[location_id]["current_weather"]
+        loc, err = _get_location_or_err(parameters.get("location_id"))
+        if err is not None:
+            return err, 0.0, {}
+        result = loc["current_weather"]
         self._instance[instance_id]["last"] = result
         return ToolResponse(text=result), 0.0, {}
 
@@ -241,8 +293,10 @@ class GetCityForLocationTool(RelationalBaseTool):
         {"type": "object", "properties": {"location_id": {"title": "Location Id", "type": "integer"}}, "required": ["location_id"]},
     )
     async def execute(self, instance_id, parameters, **kwargs):
-        location_id = int(parameters["location_id"])
-        result = _loc_by_id[location_id]["city"]
+        loc, err = _get_location_or_err(parameters.get("location_id"))
+        if err is not None:
+            return err, 0.0, {}
+        result = loc["city"]
         self._instance[instance_id]["last"] = result
         return ToolResponse(text=result), 0.0, {}
 
@@ -253,8 +307,10 @@ class GetCurrentTimeForLocationTool(RelationalBaseTool):
         {"type": "object", "properties": {"location_id": {"title": "Location Id", "type": "integer"}}, "required": ["location_id"]},
     )
     async def execute(self, instance_id, parameters, **kwargs):
-        location_id = int(parameters["location_id"])
-        result = _loc_by_id[location_id]["current_time"]
+        loc, err = _get_location_or_err(parameters.get("location_id"))
+        if err is not None:
+            return err, 0.0, {}
+        result = loc["current_time"]
         self._instance[instance_id]["last"] = result
         return ToolResponse(text=result), 0.0, {}
 
@@ -265,8 +321,10 @@ class GetCurrentWeatherForLocationTool(RelationalBaseTool):
         {"type": "object", "properties": {"location_id": {"title": "Location Id", "type": "integer"}}, "required": ["location_id"]},
     )
     async def execute(self, instance_id, parameters, **kwargs):
-        location_id = int(parameters["location_id"])
-        result = _loc_by_id[location_id]["current_weather"]
+        loc, err = _get_location_or_err(parameters.get("location_id"))
+        if err is not None:
+            return err, 0.0, {}
+        result = loc["current_weather"]
         self._instance[instance_id]["last"] = result
         return ToolResponse(text=result), 0.0, {}
 
@@ -277,8 +335,10 @@ class GetFoodNameTool(RelationalBaseTool):
         {"type": "object", "properties": {"food_id": {"title": "Food Id", "type": "integer"}}, "required": ["food_id"]},
     )
     async def execute(self, instance_id, parameters, **kwargs):
-        food_id = int(parameters["food_id"])
-        result = _food_by_id[food_id]["name"]
+        food, err = _get_food_or_err(parameters.get("food_id"))
+        if err is not None:
+            return err, 0.0, {}
+        result = food["name"]
         self._instance[instance_id]["last"] = result
         return ToolResponse(text=result), 0.0, {}
 
@@ -289,8 +349,10 @@ class GetFoodCaloriesTool(RelationalBaseTool):
         {"type": "object", "properties": {"food_id": {"title": "Food Id", "type": "integer"}}, "required": ["food_id"]},
     )
     async def execute(self, instance_id, parameters, **kwargs):
-        food_id = int(parameters["food_id"])
-        result = _food_by_id[food_id]["calories"]
+        food, err = _get_food_or_err(parameters.get("food_id"))
+        if err is not None:
+            return err, 0.0, {}
+        result = food["calories"]
         self._instance[instance_id]["last"] = result
         return ToolResponse(text=_json_text(result)), 0.0, {}
 
@@ -301,8 +363,10 @@ class GetFoodAllergicIngredientsTool(RelationalBaseTool):
         {"type": "object", "properties": {"food_id": {"title": "Food Id", "type": "integer"}}, "required": ["food_id"]},
     )
     async def execute(self, instance_id, parameters, **kwargs):
-        food_id = int(parameters["food_id"])
-        result = list(_food_by_id[food_id]["allergic_ingredients"])
+        food, err = _get_food_or_err(parameters.get("food_id"))
+        if err is not None:
+            return err, 0.0, {}
+        result = list(food["allergic_ingredients"])
         self._instance[instance_id]["last"] = result
         return ToolResponse(text=_json_text(result)), 0.0, {}
 
